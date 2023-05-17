@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  S3BucketName:
+    Description: S3 Bucket with Assets
+    Type: String
+    Default: aws-blogs-artifacts-public
+  HFModel:
+    Description: S3 Bucket with Assets
+    Type: String
+    Default: huggingface-text2text-flan-t5-xl
+  HFTask:
+    Description: S3 Bucket with Assets
+    Type: String
+    Default: text2text
+
+Resources:
+  SMJumpstartFlanT5SMEndpoint:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://s3.us-east-1.amazonaws.com/${S3BucketName}/artifacts/ML-12016/v1/stacks/SMJumpstartFlanT5-SMEndpoint.template.json'
+      TimeoutInMinutes: "60"
+      Parameters:
+        HFModel: !Ref HFModel
+        HFTask: !Ref HFTask
+  SMJumpstartFlanT5LambdaHook:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: SMJumpstartFlanT5SMEndpoint
+    Properties:
+      TemplateURL: !Sub 'https://s3.us-east-1.amazonaws.com/${S3BucketName}/artifacts/ML-12016/v1/stacks/SMJumpstartFlanT5-LambdaHook.template.json'
+      TimeoutInMinutes: "60"
+      Parameters:
+        S3BucketName: !Ref S3BucketName
+        Version: !Sub artifacts/ML-12016/v1
+  SMJumpstartFlanT5LexBot:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: SMJumpstartFlanT5LambdaHook
+    Properties:
+      TemplateURL: !Sub 'https://s3.us-east-1.amazonaws.com/${S3BucketName}/artifacts/ML-12016/v1/stacks/SMJumpstartFlanT5-LexBot.template.json'
+      TimeoutInMinutes: "60"
+        

@@ -1,0 +1,152 @@
+{
+ "Resources": {
+  "LexBotRole": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lexv2.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Policies": [
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": "polly:SynthesizeSpeech",
+         "Effect": "Allow",
+         "Resource": "*"
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "lex-run-bot"
+     },
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+         ],
+         "Effect": "Allow",
+         "Resource": "*"
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "lex-put-logs"
+     }
+    ]
+   }
+  },
+  "SampleHFFlanFallbackBot": {
+   "Type": "AWS::Lex::Bot",
+   "Properties": {
+    "DataPrivacy": {
+     "ChildDirected": false
+    },
+    "IdleSessionTTLInSeconds": 300,
+    "Name": "Sagemaker-Jumpstart-Flan-LLM-Fallback-Bot",
+    "RoleArn": {
+     "Fn::GetAtt": [
+      "LexBotRole",
+      "Arn"
+     ]
+    },
+    "AutoBuildBotLocales": false,
+    "BotLocales": [
+     {
+      "Intents": [
+       {
+        "IntentClosingSetting": {
+         "ClosingResponse": {
+          "MessageGroupsList": [
+           {
+            "Message": {
+             "PlainTextMessage": {
+              "Value": "Hello I am a sample Lex Bot that calls a Sagemaker Jumpstart model using langchain"
+             }
+            }
+           }
+          ]
+         }
+        },
+        "Name": "DescribeLexBot",
+        "SampleUtterances": [
+         {
+          "Utterance": "Describe bot"
+         }
+        ]
+       },
+       {
+        "Description": "Fallback intent which calls Sagemaker Jumpstart model using langchain",
+        "FulfillmentCodeHook": {
+         "Enabled": true
+        },
+        "DialogCodeHook": {
+         "Enabled": false
+        },
+        "Name": "FallbackIntent",
+        "ParentIntentSignature": "AMAZON.FallbackIntent"
+       }
+      ],
+      "LocaleId": "en_US",
+      "NluConfidenceThreshold": 0.4
+     }
+    ],
+    "TestBotAliasSettings": {
+     "BotAliasLocaleSettings": [
+      {
+       "BotAliasLocaleSetting": {
+        "CodeHookSpecification": {
+         "LambdaCodeHook": {
+          "CodeHookInterfaceVersion": "1.0",
+          "LambdaArn": {
+           "Fn::ImportValue": "SMJumpstartFlanT5LambdaHookStack:LambdaHookFunctionArn"
+          }
+         }
+        },
+        "Enabled": true
+       },
+       "LocaleId": "en_US"
+      }
+     ]
+    }
+   }
+  }
+ },
+
+ "Outputs": {
+  "SMJumpstartFlanFallbackBotArn": {
+   "Value": {
+    "Fn::GetAtt": [
+     "SampleHFFlanFallbackBot",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "LexBotStack:SMJumpstartFlanFallbackBotArn"
+   }
+  },
+  "SMJumpstartFlanFallbackBotId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "SampleHFFlanFallbackBot",
+     "Id"
+    ]
+   },
+   "Export": {
+    "Name": "LexBotStack:SMJumpstartFlanFallbackBotId"
+   }
+  }
+ }
+}
