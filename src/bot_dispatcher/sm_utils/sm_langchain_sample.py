@@ -136,7 +136,7 @@ class SagemakerLangchainBot():
             endpoint_name=sm_endpoint_name,
             region_name=region_name,
             content_handler=SagemakerContentHandler(),
-            model_kwargs={"temperature":1,"max_length":50, "num_return_sequences":3, "top_k":50, "top_p":0.95, "do_sample":True}
+            model_kwargs={"temperature":2.0,"max_length":50, "num_return_sequences":3, "top_k":50, "top_p":0.95, "do_sample":True}
         )
 
         # Create a conversation chain using the prompt, llm hosted in Sagemaker, and custom memory class
@@ -162,4 +162,3 @@ class SagemakerLangchainBot():
         print("call_llm - input :: "+user_input)
         print("call_llm - output :: "+output)
         return output 
-        

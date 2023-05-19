@@ -38,4 +38,18 @@ Resources:
     Properties:
       TemplateURL: !Sub 'https://s3.us-east-1.amazonaws.com/${S3BucketName}/artifacts/ML-12016/v1/stacks/SMJumpstartFlanT5-LexBot.template.json'
       TimeoutInMinutes: "60"
-        
+Outputs:
+  StackRef:
+    Value: !Ref SMJumpstartFlanT5LambdaHook
+  LambdaHookFunctionArn:
+    Description: 'ARN of the AWS Lambda Function used as a Hook'
+    Value: !GetAtt 
+      - SMJumpstartFlanT5LambdaHook
+      - Outputs.LambdaHookFunctionArn
+  StackRef:
+    Value: !Ref SMJumpstartFlanT5LexBot
+  SMJumpstartFlanFallbackBotArn:
+    Description: 'ARN of Amazon Lex Bot'
+    Value: !GetAtt 
+      - SMJumpstartFlanT5LexBot
+      - Outputs.SMJumpstartFlanFallbackBotArn
