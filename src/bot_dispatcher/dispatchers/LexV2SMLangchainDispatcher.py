@@ -38,8 +38,10 @@ class LexV2SMLangchainDispatcher():
         Human: {input}
         AI:"""
         
-        # Set context with convo history for custom memory "RAG" in langchain
+        # Set context with convo history for custom memory in langchain
         conv_context: str = self.session_attributes.get('ConversationContext',json.dumps(initial_history))
+        conv_context_json = json.loads(conv_context)
+        "\n".join(sample_str.split("\n")[-3:])  
 
         logger.debug("Conv Conext:")
         logger.debug(conv_context)

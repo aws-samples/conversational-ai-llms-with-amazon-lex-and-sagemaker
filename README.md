@@ -1,6 +1,6 @@
-# Boosting Customer Experience with Conversational AI and Large Language Models (LLMS)
+# Getting Started on Generative AI with Conversational AI and Large Language Model (LLMS)
 
-This repository is meant as an accompaniment to the blogpost Boosting Customer Experience with Conversational AI and Large Language Models (LLMS). The source code is hosted here but you can refer to the blog for a one-click AWS Cloudformation deployment link.
+This repository is meant as an accompaniment to an upcoming blogpost showing a sample integration with Lex and an out of the box LLM from Sagemaker Jumpstart
 
 ## Architecture
 ![architectureDiagram](static/architectureDiagram.png)
@@ -39,7 +39,7 @@ Comments in the code can be seen for further details.
 
 ## Deploying resources into your own Account
 
-### Prerequisites 
+### Prerequisites
 * AWS CLI Credentials. We would [recommend using named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html#cli-configure-files-using-profiles)
 * Docker Installed
 

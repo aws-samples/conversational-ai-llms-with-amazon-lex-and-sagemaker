@@ -34,7 +34,7 @@ class QnABotSMLangchainDispatcher():
         AI:"""
 
         if 'ConversationContext' in self.session_attributes:
-            # Set context with convo history for custom memory "RAG" in langchain
+            # Set context with convo history for custom memory in langchain
             conv_context: dict = self.session_attributes.get('ConversationContext')
             conv_context['inputs']['text'] = self.input_transcript
         else:
