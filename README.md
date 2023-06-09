@@ -1,6 +1,7 @@
 # Getting Started on Generative AI with Conversational AI and Large Language Model (LLMS)
 
-This repository is meant as an accompaniment to an upcoming blogpost showing a sample integration with Lex and an out of the box LLM from Sagemaker Jumpstart
+This repository is meant as an accompaniment to the blogpost [Exploring Generative AI in conversational experiences: An Introduction with Amazon Lex, Langchain, and SageMaker Jumpstart
+](https://aws.amazon.com/blogs/machine-learning/exploring-generative-ai-in-conversational-experiences-an-introduction-with-amazon-lex-langchain-and-sagemaker-jumpstart/) illustrating a sample integration with AWS Lambda, Amazon Lex, an out of the box LLM from Sagemaker Jumpstart, and [Langchain](https://python.langchain.com/en/latest/index.html)
 
 ## Architecture
 ![architectureDiagram](static/architectureDiagram.png)
