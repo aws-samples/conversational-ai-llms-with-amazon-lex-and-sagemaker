@@ -9,7 +9,7 @@ pip install -r requirements.txt --target ./package/python
 cd package
 echo "Zipping into lambda layer"
 zip -v -r9 $LAYER_NAME .
-mv $LAYER_NAME /aws-cai-lex-bots/src/bot_dispatcher/$LAYER_NAME
+mv $LAYER_NAME /conversational-ai-llms-with-amazon-lex-and-sagemaker/src/bot_dispatcher/$LAYER_NAME
 cd ..
 rm -rf package/
 deactivate

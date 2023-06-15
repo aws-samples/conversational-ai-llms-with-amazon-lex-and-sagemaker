@@ -1,0 +1,139 @@
+{
+ "Parameters":{
+    "HFTask": {"Type": "String", "Default": "text2text"},
+    "HFModel": {"Type": "String", "Default": "huggingface-text2text-flan-t5-xl"}
+ },
+
+ "Resources": {
+  "SagemakerEndpointRole": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "sagemaker.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "RoleName": "sm_jumpstart_flan_bot_endpoint_role"
+   }
+  },
+
+  "SagemakerEndpointPolicy": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "cloudwatch:GetMetricData",
+        "cloudwatch:GetMetricStatistics",
+        "cloudwatch:ListMetrics",
+        "cloudwatch:PutMetricData",
+        "ecr:GetAuthorizationToken",
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:DescribeLogStreams",
+        "logs:GetLogEvents",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:BatchGetImage",
+        "ecr:GetDownloadUrlForLayer",
+       ],
+       "Effect": "Allow",
+       "Resource": "arn:aws:ecr:us-west-2:763104351884:repository/huggingface-pytorch-inference*"
+      },
+      {
+         "Effect": "Allow",
+         "Action": [
+             "s3:GetObject*",
+             "s3:ListBucket"
+         ],
+         "Resource": [
+             "arn:aws:s3:::jumpstart-cache-prod-us-west-2/huggingface*",
+             "arn:aws:s3:::jumpstart-cache-prod-us-west-2"
+         ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SagemakerEndpointPolicy",
+    "Roles": [
+     {
+      "Ref": "SagemakerEndpointRole"
+     }
+    ]
+   }
+  },
+
+  "SagemakerHFModel": {
+   "Type": "AWS::SageMaker::Model",
+   "Properties": {
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "SagemakerEndpointRole",
+      "Arn"
+     ]
+    },
+    "ModelName": "sm-jumpstart-flan-bot-endpoint-model",
+    "Containers": [
+      {
+      "Environment": {
+       "MODEL_CACHE_ROOT": "/opt/ml/model",
+       "SAGEMAKER_ENV": "1",
+       "SAGEMAKER_MODEL_SERVER_TIMEOUT": "3600",
+       "SAGEMAKER_MODEL_SERVER_WORKERS": "1",
+       "SAGEMAKER_PROGRAM": "inference.py",
+       "SAGEMAKER_SUBMIT_DIRECTORY": "/opt/ml/model/code/",
+       "TS_DEFAULT_WORKERS_PER_MODEL": "1"
+      },
+      "Image": "763104351884.dkr.ecr.us-west-2.amazonaws.com/huggingface-pytorch-inference:1.13.1-transformers4.26.0-gpu-py39-cu117-ubuntu20.04",
+      "ModelDataUrl": "s3://jumpstart-cache-prod-us-west-2/huggingface-infer/prepack/v1.1.0/infer-prepack-huggingface-text2text-flan-t5-xl.tar.gz"
+     }
+    ]
+   },
+   "DependsOn":"SagemakerEndpointPolicy"
+  },
+
+  "SagemakerHFEndpointConfig": {
+   "Type": "AWS::SageMaker::EndpointConfig",
+   "Properties": {
+    "ProductionVariants": [
+     {
+      "InitialInstanceCount": 1,
+      "InitialVariantWeight": 1,
+      "InstanceType": "ml.g4dn.4xlarge",
+      "ModelName": "sm-jumpstart-flan-bot-endpoint-model",
+      "VariantName": "AllTraffic"
+     }
+    ],
+    "EndpointConfigName": "sm-jumpstart-flan-bot-endpoint-config"
+   },
+   "DependsOn": [
+    "SagemakerHFModel"
+   ]
+  },
+
+  "SagemakerHFEndpoint": {
+   "Type": "AWS::SageMaker::Endpoint",
+   "Properties": {
+    "EndpointConfigName": "sm-jumpstart-flan-bot-endpoint-config",
+    "EndpointName": "sm-jumpstart-flan-bot-endpoint"
+   },
+   "DependsOn": [
+    "SagemakerHFEndpointConfig"
+   ]
+  }
+ }
+}

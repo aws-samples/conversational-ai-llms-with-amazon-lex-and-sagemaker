@@ -18,7 +18,7 @@ Resources:
   SMJumpstartFlanT5SMEndpoint:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.us-east-1.amazonaws.com/${S3BucketName}/artifacts/ML-12016/v1/stacks/SMJumpstartFlanT5-SMEndpoint.template.json'
+      TemplateURL: !Sub 'https://s3.us-west-2.amazonaws.com/${S3BucketName}/artifacts/ML-12016/v1/stacks/SMJumpstartFlanT5-SMEndpoint-uswest2.template.json'
       TimeoutInMinutes: "60"
       Parameters:
         HFModel: !Ref HFModel
@@ -27,7 +27,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: SMJumpstartFlanT5SMEndpoint
     Properties:
-      TemplateURL: !Sub 'https://s3.us-east-1.amazonaws.com/${S3BucketName}/artifacts/ML-12016/v1/stacks/SMJumpstartFlanT5-LambdaHook.template.json'
+      TemplateURL: !Sub 'https://s3.us-west-2.amazonaws.com/${S3BucketName}/artifacts/ML-12016/v1/stacks/SMJumpstartFlanT5-LambdaHook.template.json'
       TimeoutInMinutes: "60"
       Parameters:
         S3BucketName: !Ref S3BucketName
@@ -36,7 +36,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: SMJumpstartFlanT5LambdaHook
     Properties:
-      TemplateURL: !Sub 'https://s3.us-east-1.amazonaws.com/${S3BucketName}/artifacts/ML-12016/v1/stacks/SMJumpstartFlanT5-LexBot.template.json'
+      TemplateURL: !Sub 'https://s3.us-west-2.amazonaws.com/${S3BucketName}/artifacts/ML-12016/v1/stacks/SMJumpstartFlanT5-LexBot.template.json'
       TimeoutInMinutes: "60"
 Outputs:
   StackRef:

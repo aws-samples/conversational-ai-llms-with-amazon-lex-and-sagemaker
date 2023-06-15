@@ -43,6 +43,7 @@ Comments in the code can be seen for further details.
 ### Prerequisites
 * AWS CLI Credentials. We would [recommend using named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html#cli-configure-files-using-profiles)
 * Docker Installed
+* This solution can currently be deployed in **us-east-1** or **us-west-2**
 
 ### Build the Langchain Lambda Layer
 * Use the following instructions to build the zip file required to use [Langchain](https://python.langchain.com/en/latest/index.html) as an AWS Lambda Layer. LangChain is a framework for developing applications powered by language models and contains abstractions for interacting with AWS Sagemaker and integrating other capabilties. See the [conceptual Langchain documentation](https://docs.langchain.com/docs/) for more information.
@@ -53,7 +54,7 @@ Comments in the code can be seen for further details.
 docker build -t lambda-build-langchain .
 ```
 
-2. Once the Image is built, run a container from it. It wil use the `/src/build_langchain_layer.sh` script to create a virtual environment, install Langchain and it's dependencies, and zip it into the required format for an AWS Lambda Layer.
+2. Once the Image is built, run a container from it. It will use the `/src/build_langchain_layer.sh` script to create a virtual environment, install Langchain and it's dependencies, and zip it into the required format for an AWS Lambda Layer.
 ```
 docker run --platform linux/amd64 \
 -v "$PWD"/..:/conversational-ai-llms-with-amazon-lex-and-sagemaker \
@@ -67,11 +68,13 @@ docker run --platform linux/amd64 \
 The `deploy.sh` script at the root of the directory can be used to deploy these resources into your own AWS account,
 
 1. Ensure you are authenticated with AWS CLI credentials.
-2. In the `deploy.sh` script,in lines 3 and 4, change the parameters to indicate the name of your profile and the S3 bucket where you are looking to host the assets
-3. Run the script with `./deploy.sh`
-4. It will deploy the Static cloudformation files and the Zip files which are used for the Lambda
+2. In the `deploy.sh` script, in lines 3 and 4, change the parameters to indicate the name of your profile and the S3 bucket where you are looking to host the assets
+3. `cd ..` to ensure your terminal is where the `deploy.sh` script is.
+4. Run the script with `./deploy.sh`
+5. It will deploy the Static cloudformation files and the Zip files which are used for the Lambda
     - langchain_layer.zip was generated above
-    - lex-flan-lambda.zip is generated in the script in line 13
-5. To deploy the solution from these resources, copy the S3 URI where the `SMJumpstartFlanT5-llm-main.yaml` was deployed and use that as as the cloudformation input.
-6. When deploying the AWS Cloudformation stack, be sure to change the `S3BucketName` parameter if you are deploying using the insturctions here. By default it will refer to the public assets accomanying the blogpost.
-
+    - lex-flan-lambda.zip is generated in the `deploy.sh` script in line 13
+6. Navigate to the S3 bucket you deployed the assets to. Find the `SMJumpstartFlanT5-llm-main` template corresponding to the region where you want to deploy. It will be located in the `artifacts/ML-12016/v1/stacks/` prefix. Click into it and copy the S3 URL to use as cloudformation input.
+    - For **us-east-1:**: use the `SMJumpstartFlanT5-llm-main.yaml` template 
+    - For **us-west-2:**: use the `SMJumpstartFlanT5-llm-main-uswest2.yaml` template
+7. When deploying the AWS Cloudformation stack, be sure to change the `S3BucketName` parameter if you are deploying using the insturctions here. By default it will refer to the public assets accomanying the blogpost.
